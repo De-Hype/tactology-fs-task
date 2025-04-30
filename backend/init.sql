@@ -1,0 +1,1 @@
+CREATE DATABASE tactology_assessment_task;
