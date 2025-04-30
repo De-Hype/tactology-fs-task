@@ -9,6 +9,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
+  
   @Query(() => User)
   @UseGuards(JwtAuthGuard)
   async me(@CurrentUser() user: User) {

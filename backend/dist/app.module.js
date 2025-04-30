@@ -29,18 +29,41 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
-                useFactory: async (configService) => ({
-                    type: 'postgres',
-                    host: configService.get('DB_HOST'),
-                    port: +configService.get('DB_PORT'),
-                    username: configService.get('DB_USERNAME'),
-                    password: configService.get('DB_PASSWORD'),
-                    database: configService.get('DB_DATABASE'),
-                    entities: [(0, path_1.join)(__dirname, '**', '*.entity.{ts,js}')],
-                    synchronize: configService.get('NODE_ENV') !== 'production',
-                    logging: configService.get('NODE_ENV') !== 'production',
-                    ssl: configService.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
-                }),
+                useFactory: async (configService) => {
+                    const isProd = configService.get('NODE_ENV') === 'production';
+                    const databaseUrl = configService.get('DATABASE_URL');
+                    if (databaseUrl) {
+                        return {
+                            type: 'postgres',
+                            url: databaseUrl,
+                            entities: [(0, path_1.join)(__dirname, '**', '*.entity.{ts,js}')],
+                            synchronize: !isProd,
+                            logging: !isProd,
+                            ssl: {
+                                rejectUnauthorized: false
+                            },
+                            connectTimeoutMS: 10000,
+                            extra: {
+                                family: 4
+                            }
+                        };
+                    }
+                    console.log(`Using local database configuration`);
+                    return {
+                        type: 'postgres',
+                        host: configService.get('DB_HOST'),
+                        port: +configService.get('DB_PORT'),
+                        username: configService.get('DB_USERNAME'),
+                        password: configService.get('DB_PASSWORD'),
+                        database: configService.get('DB_DATABASE'),
+                        entities: [(0, path_1.join)(__dirname, '**', '*.entity.{ts,js}')],
+                        synchronize: !isProd,
+                        logging: !isProd,
+                        extra: {
+                            family: 4
+                        }
+                    };
+                },
             }),
             graphql_1.GraphQLModule.forRoot({
                 driver: apollo_1.ApolloDriver,

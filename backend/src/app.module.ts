@@ -4,10 +4,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DepartmentsModule } from './departments/departments.module';
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,18 +18,43 @@ import { DepartmentsModule } from './departments/departments.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: +configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE'),
-        entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-        synchronize: configService.get('NODE_ENV') !== 'production',
-        logging: configService.get('NODE_ENV') !== 'production',
-        ssl: configService.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const isProd = configService.get('NODE_ENV') === 'production';
+        const databaseUrl = configService.get<string>('DATABASE_URL');
+        
+        if (databaseUrl) {
+          return {
+            type: 'postgres',
+            url: databaseUrl,
+            entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+            synchronize: !isProd,
+            logging: !isProd,
+            ssl: {
+              rejectUnauthorized: false 
+            },
+            connectTimeoutMS: 10000, 
+            extra: {
+              family: 4
+            }
+          };
+        }
+        
+        console.log(`Using local database configuration`);
+        return {
+          type: 'postgres',
+          host: configService.get<string>('DB_HOST'),
+          port: +configService.get('DB_PORT'),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_DATABASE'),
+          entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+          synchronize: !isProd,
+          logging: !isProd,
+          extra: {
+            family: 4
+          }
+        };
+      },
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
