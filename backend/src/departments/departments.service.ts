@@ -73,7 +73,7 @@ export class DepartmentsService {
 
   async remove(id: number): Promise<boolean> {
     const department = await this.findOne(id);
-    
+
     const result = await this.departmentsRepository.remove(department);
     
     return !!result;
