@@ -96,7 +96,7 @@ JWT_SECRET=your_jwt_secret_key
 JWT_EXPIRATION=1d
 
 # Remote DB (will override local DB if present)
-DATABASE_URL=postgresql://tactology_user:AOo2ls9opLSTws2mFL9ugiCxP4Vhq4YA@dpg-d09a56re5dus739c66sg-a.oregon-postgres.render.com/tactology_assessment_task
+DATABASE_URL=yourownpostgresdburl
 ```
 
 > 🔐 **Note**: If `DATABASE_URL` is defined, the app will connect to the **remote PostgreSQL** instance hosted on **Render**, bypassing your local Docker database.
