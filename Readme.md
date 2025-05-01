@@ -136,3 +136,159 @@ This will run the unit tests in watch mode.
 - Docker services are defined inside `backend/docker-compose.yml`.
 - Ensure ports `5433` and `8080` are available on your machine before starting Docker.
 - Frontend and backend both use `npm install` for dependencies.
+
+---
+
+## 🔍 Queries & Mutations for Testing
+
+Use these queries and mutations to test your API via [GraphQL Playground](http://localhost:5300/graphql):
+
+### ➕ Create a User
+
+```graphql
+mutation {
+  createUser(input: {
+    username: "john_doe",
+    email: "john@example.com",
+    password: "strongpassword"
+  }) {
+    id
+    username
+    email
+  }
+}
+```
+
+---
+
+### 🔐 Login
+
+```graphql
+mutation {
+  login(input: {
+    username: "john_doe",
+    password: "strongpassword"
+  }) {
+    accessToken
+    user {
+      id
+      username
+      email
+    }
+  }
+}
+```
+
+---
+
+### 🏢 Create Department
+
+```graphql
+mutation {
+  createDepartment(input: {
+    name: "Engineering",
+    subDepartments: [
+      { name: "Frontend" },
+      { name: "Backend" }
+    ]
+  }) {
+    id
+    name
+    subDepartments {
+      id
+      name
+    }
+  }
+}
+```
+
+---
+
+### 📝 Update Department
+
+```graphql
+mutation {
+  updateDepartment(input: {
+    id: "1",  # Replace with actual ID
+    name: "Updated Department Name"
+  }) {
+    id
+    name
+  }
+}
+```
+
+---
+
+### ❌ Remove Department
+
+```graphql
+mutation {
+  removeDepartment(id: "1")  # Replace with actual ID
+}
+```
+
+---
+
+### 🔍 Get All Departments
+
+```graphql
+query {
+  departments(limit: 10, page: 1) {
+    id
+    name
+    subDepartments {
+      id
+      name
+    }
+  }
+}
+```
+
+---
+
+### 🔍 Get Single Department
+
+```graphql
+query {
+  department(id: "1") {
+    id
+    name
+    subDepartments {
+      id
+      name
+    }
+  }
+}
+```
+
+---
+
+### 👤 Get Current User
+
+> Requires Authorization header: `Bearer <accessToken>`
+
+```graphql
+query {
+  me {
+    id
+    username
+    email
+  }
+}
+```
+
+---
+
+### 👤 Get User by ID
+
+```graphql
+query {
+  user(id: 1) {
+    id
+    username
+    email
+  }
+}
+```
+
