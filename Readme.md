@@ -12,6 +12,17 @@ This project is a fullstack application consisting of a **Next.js frontend** and
 
 ---
 
+## 📥 Clone the Project
+
+First, clone the repository to your local machine:
+
+```bash
+git clone https://github.com/De-Hype/tactology-fs-task.git
+cd tactology-fs-task
+```
+
+---
+
 ## 📁 Folder Structure
 
 ```bash
@@ -19,6 +30,8 @@ This project is a fullstack application consisting of a **Next.js frontend** and
 ├── frontend/     # Next.js Frontend
 └── backend/      # NestJS Backend with Docker and PostgreSQL
 ```
+
+
 
 ---
 
@@ -40,7 +53,8 @@ npm install
 npm run dev
 ```
 
-This will start the frontend at [http://localhost:3000](http://localhost:3000) (except you have something else runing there)
+This will start the frontend at [http://localhost:3000](http://localhost:3000)  
+(Unless something else is already running on that port.)
 
 ---
 
